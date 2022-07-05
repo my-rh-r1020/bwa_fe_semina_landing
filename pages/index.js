@@ -1,5 +1,6 @@
 // Import Libraries
 import Head from "next/head";
+import { getData } from "../utils/fetchData";
 
 // Import Components
 import Header from "../components/HeaderPage";
@@ -9,7 +10,7 @@ import StoriesSection from "../components/Stories";
 import StatisticsSection from "../components/Statistics";
 import Footer from "../components/Footer";
 
-export default function Home() {
+export default function Home({ data }) {
   return (
     <>
       <Head>
@@ -22,10 +23,10 @@ export default function Home() {
       <Header />
 
       {/* Brand Section */}
-      <BrandSection />
+      <BrandSection landing />
 
       {/* Grow Today Section */}
-      <CardEventSection data={[]} subtitle="Grow Today" title="Featured Events" />
+      <CardEventSection data={data} subtitle="Grow Today" title="Featured Events" />
 
       {/* Stories Section */}
       <StoriesSection />
@@ -37,4 +38,12 @@ export default function Home() {
       <Footer />
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  // Fetch API
+  const reqServer = await getData("api/v1/participants/landing-page"),
+    res = reqServer.data;
+
+  return { props: { data: res } };
 }
