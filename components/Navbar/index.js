@@ -1,10 +1,15 @@
-import React from "react";
+// Import Library
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 // Libraries for SPA
 import Link from "next/link";
 import NavLink from "../NavLink";
-import { useRouter } from "next/router";
-import Cookies from "js-cookie";
+
+// Import Components
+import Button from "../Button";
 
 // V1 - Signin
 // export default function Navbar({ signin, authenticated }) {
@@ -195,7 +200,31 @@ import Cookies from "js-cookie";
 export default function Navbar({ signin }) {
   const router = useRouter(),
     pathSignin = "/signin",
-    token = Cookies.get("token");
+    // Use State
+    [token, setToken] = useState("");
+
+  useEffect(() => {
+    return setToken(Cookies.get("token"));
+  });
+
+  // Handle Signout
+  const handleSignout = () => {
+    // Remove Token User From Signin
+    Cookies.remove("token");
+
+    toast.success("Successfully Sign Out", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+
+    // Redirect to Signin Page
+    router.push("/signin");
+  };
 
   return (
     <nav className="container navbar navbar-expand-lg navbar-dark">
@@ -217,59 +246,59 @@ export default function Navbar({ signin }) {
           </div>
           {/* Cek router Signin */}
           {router.pathname !== pathSignin && (
-            <div className={token ? "navbar-nav ms-auto" : "d-grid"}>
+            // <div className={token ? "navbar-nav ms-auto" : "d-grid"}>
+            <div className={`d-grid ${token ? "ms-auto" : ""}`}>
               {token ? (
-                // {/* Profile Navbar */}
-                <div className="nav-item dropdown d-flex flex-column flex-lg-row align-items-lg-center authenticated gap-3">
-                  <span className="text-light d-none d-lg-block">Hello, Shayna M</span>
+                <div className="navbar-nav">
+                  <div className="nav-item dropdown d-flex flex-column flex-lg-row align-items-lg-center authenticated gap-3">
+                    <span className="text-light d-none d-lg-block">Hello, Shayna M</span>
 
-                  {/* <!-- START: Dropdown Toggler for Desktop --> */}
-                  <a className="nav-link dropdown-toggle mx-0 d-none d-lg-block" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="/images/avatar.png" alt="semina" width="60" />
-                  </a>
-                  {/* <!-- END: Dropdown Toggler for Desktop --> */}
+                    {/* <!-- START: Dropdown Toggler for Desktop --> */}
+                    <a className="nav-link dropdown-toggle mx-0 d-none d-lg-block" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="/images/avatar.png" alt="semina" width="60" />
+                    </a>
+                    {/* <!-- END: Dropdown Toggler for Desktop --> */}
 
-                  {/* <!-- START: Dropdown Toggler for Mobile --> */}
-                  <a className="d-block d-lg-none dropdown-toggle text-light text-decoration-none" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    <img src="/images/avatar.png" alt="semina" width="60" />
-                  </a>
-                  {/* <!-- END: Dropdown Toggler for Mobile --> */}
+                    {/* <!-- START: Dropdown Toggler for Mobile --> */}
+                    <a className="d-block d-lg-none dropdown-toggle text-light text-decoration-none" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                      <img src="/images/avatar.png" alt="semina" width="60" />
+                    </a>
+                    {/* <!-- END: Dropdown Toggler for Mobile --> */}
 
-                  {/* <!-- START: Dropdown Menu for Desktop --> */}
-                  <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <Link href="#">
-                      <a className="dropdown-item">Dashboard</a>
-                    </Link>
-                    <Link href="#">
-                      <a className="dropdown-item">Settings</a>
-                    </Link>
-                    <Link href="#">
-                      <a className="dropdown-item">Rewards</a>
-                    </Link>
-                    <Link href="/signin">
-                      <a className="dropdown-item">Sign Out</a>
-                    </Link>
-                  </ul>
-                  {/* <!-- END: Dropdown Menu for Desktop --> */}
-
-                  {/* <!-- START: Dropdown Menu for Mobile --> */}
-                  <div className="collapse" id="collapseExample">
-                    <ul className="list-group">
-                      <Link href="#">
-                        <a className="list-group-item">Dashboard</a>
+                    {/* <!-- START: Dropdown Menu for Desktop --> */}
+                    <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <Link href="/dashboard">
+                        <a className="dropdown-item">Dashboard</a>
                       </Link>
                       <Link href="#">
-                        <a className="list-group-item">Settings</a>
+                        <a className="dropdown-item">Settings</a>
                       </Link>
                       <Link href="#">
-                        <a className="list-group-item">Rewards</a>
+                        <a className="dropdown-item">Rewards</a>
                       </Link>
-                      <Link href="/signin">
-                        <a className="list-group-item">Sign Out</a>
-                      </Link>
+                      <Button className="dropdown-item" children="Sign Out" action={handleSignout} />
                     </ul>
+                    {/* <!-- END: Dropdown Menu for Desktop --> */}
+
+                    {/* <!-- START: Dropdown Menu for Mobile --> */}
+                    <div className="collapse" id="collapseExample">
+                      <ul className="list-group">
+                        <Link href="/dashboard">
+                          <a className="list-group-item">Dashboard</a>
+                        </Link>
+                        <Link href="#">
+                          <a className="list-group-item">Settings</a>
+                        </Link>
+                        <Link href="#">
+                          <a className="list-group-item">Rewards</a>
+                        </Link>
+                        <li>
+                          <Button className="list-group-item" children="Sign Out" action={handleSignout} />
+                        </li>
+                      </ul>
+                    </div>
+                    {/* <!-- END: Dropdown Menu for Mobile --> */}
                   </div>
-                  {/* <!-- END: Dropdown Menu for Mobile --> */}
                 </div>
               ) : (
                 <Link href="/signin">

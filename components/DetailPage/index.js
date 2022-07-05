@@ -3,16 +3,21 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import moment from "moment";
+import Cookies from "js-cookie";
 
 // Import Components
 import Button from "../Button";
 
 export default function DetailPage({ data }) {
-  const router = useRouter();
+  const router = useRouter(),
+    token = Cookies.get("token");
 
   // Handle Submit
-  const handleSubmit = (id) => {
-    router.push("/checkout");
+  const handleSubmit = () => {
+    // Cek Token User
+    if (!token) return router.push("/signin");
+
+    router.push(`/checkout/${data._id}`);
   };
 
   return (
@@ -33,8 +38,8 @@ export default function DetailPage({ data }) {
             <div className="keypoints">
               {/* <!-- Key 1 --> */}
               {data.keypoint.map((keypoint, i) => (
-                <div className="d-flex align-items-start gap-3">
-                  <img src="/icons/ic-check.svg" alt="semina" key={i} />
+                <div className="d-flex align-items-start gap-3" key={i}>
+                  <img src="/icons/ic-check.svg" alt="semina" />
                   <span>{keypoint}</span>
                 </div>
               ))}
